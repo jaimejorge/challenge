@@ -1,36 +1,17 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: postgresql
+  name: cnpg-operator
   namespace: argocd
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
 spec:
   project: default
   source:
-    repoURL: https://charts.bitnami.com/bitnami
-    chart: postgresql
-    targetRevision: "16.4.1"
-    helm:
-      valuesObject:
-        auth:
-          existingSecret: postgresql-credentials
-          secretKeys:
-            adminPasswordKey: postgres-password
-            userPasswordKey: password
-        primary:
-          persistence:
-            size: 1Gi
-          resources:
-            limits:
-              cpu: 500m
-              memory: 512Mi
-            requests:
-              cpu: 100m
-              memory: 128Mi
+    repoURL: https://cloudnative-pg.github.io/charts
+    chart: cloudnative-pg
+    targetRevision: "0.23.0"
   destination:
     server: https://kubernetes.default.svc
-    namespace: default
+    namespace: cnpg-system
   syncPolicy:
     automated:
       prune: true
