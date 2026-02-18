@@ -17,9 +17,13 @@ service:
 containerPort: 8080
 
 env:
-  HTTP_PORT: "80"
+  HTTP_PORT: "8080"
   HTTPS_PORT: "443"
   ENABLE_HTTPS: "false"
+  PROMETHEUS_ENABLED: "true"
+  PROMETHEUS_WITH_PATH: "true"
+  PROMETHEUS_WITH_METHOD: "true"
+  PROMETHEUS_WITH_STATUS: "true"
 
 ingress:
   enabled: true
@@ -47,7 +51,10 @@ serviceAccount:
   # If not set and create is true, a name is generated using the fullname template
   name: ""
 
-podAnnotations: {}
+podAnnotations:
+  prometheus.io/scrape: "true"
+  prometheus.io/port: "8080"
+  prometheus.io/path: "/metrics"
 
 podSecurityContext: {}
   # fsGroup: 2000
