@@ -8,7 +8,7 @@ metadata:
 spec:
   project: default
   source:
-    repoURL: https://github.com/jaimejorge/challenge-k3s.git
+    repoURL: https://github.com/jaimejorge/challenge.git
     targetRevision: main
     path: apps/postgresql
   destination:
