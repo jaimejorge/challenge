@@ -1,0 +1,27 @@
+apiVersion: postgresql.cnpg.io/v1
+kind: Cluster
+metadata:
+  name: postgresql
+spec:
+  instances: 1
+  imageName: ghcr.io/cloudnative-pg/postgresql:16
+
+  storage:
+    size: 1Gi
+
+  # Secret pre-created in install_k3s.sh
+  superuserSecret:
+    name: postgresql-superuser
+
+  bootstrap:
+    initdb:
+      database: app
+      owner: postgres
+
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "100m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
