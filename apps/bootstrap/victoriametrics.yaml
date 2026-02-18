@@ -1,7 +1,7 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: victoriametrics
+  name: victoriametrics-stack
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "1"
@@ -9,11 +9,58 @@ spec:
   project: default
   source:
     repoURL: https://victoriametrics.github.io/helm-charts/
-    chart: victoria-metrics-single
-    targetRevision: "0.12.0"
+    chart: victoria-metrics-k8s-stack
+    targetRevision: "0.28.0"
     helm:
-      valueFiles:
-        - values.yaml
+      valuesObject:
+        grafana:
+          enabled: true
+          adminPassword: admin
+          ingress:
+            enabled: true
+            ingressClassName: traefik
+            hosts:
+              - grafana.localtest.me
+        
+        vmagent:
+          enabled: true
+          spec:
+            resources:
+              requests:
+                cpu: "50m"
+                memory: "64Mi"
+              limits:
+                cpu: "200m"
+                memory: "128Mi"
+        
+        vmsingle:
+          enabled: true
+          spec:
+            retentionPeriod: "7d"
+            storage:
+              storageClassName: local-path
+              resources:
+                requests:
+                  storage: 256Mi
+            resources:
+              requests:
+                cpu: "50m"
+                memory: "128Mi"
+              limits:
+                cpu: "200m"
+                memory: "256Mi"
+        
+        alertmanager:
+          enabled: false
+        
+        vmalert:
+          enabled: false
+        
+        kubeStateMetrics:
+          enabled: true
+        
+        prometheus-node-exporter:
+          enabled: true
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
@@ -23,3 +70,4 @@ spec:
       selfHeal: true
     syncOptions:
       - CreateNamespace=true
+      - ServerSideApply=true
