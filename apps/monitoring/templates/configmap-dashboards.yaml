@@ -1,0 +1,19 @@
+{{- $files := .Files.Glob "dashboards/*.json" }}
+{{- if $files }}
+{{- range $path, $bytes := $files }}
+{{- $name := base $path | trimSuffix ".json" }}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: grafana-dashboard-{{ $name }}
+  labels:
+    {{- include "monitoring-dashboards.labels" $ | nindent 4 }}
+    {{ $.Values.dashboards.label }}: {{ $.Values.dashboards.labelValue | quote }}
+  annotations:
+    grafana_folder: {{ $.Values.dashboards.folder | quote }}
+data:
+  {{ base $path }}: |-
+{{ $bytes | toString | indent 4 }}
+{{- end }}
+{{- end }}
