@@ -17,7 +17,7 @@ service:
 containerPort: 8080
 
 env:
-  HTTP_PORT: "8080"
+  HTTP_PORT: "80"
   HTTPS_PORT: "443"
   ENABLE_HTTPS: "false"
 
@@ -60,9 +60,6 @@ securityContext:
   runAsNonRoot: true
   runAsUser: 1000
 
-service:
-  type: ClusterIP
-  port: 80
 
 livenessProbe:
   httpGet:
