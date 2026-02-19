@@ -34,6 +34,10 @@ spec:
                 memory: "128Mi"
         
         vmsingle:
+          ingress:
+            enabled: true
+            hosts:
+              - vmsingle.localtest.me
           enabled: true
           spec:
             retentionPeriod: "7d"
