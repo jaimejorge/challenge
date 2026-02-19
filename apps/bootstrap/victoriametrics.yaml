@@ -55,10 +55,10 @@ spec:
                 memory: "256Mi"
         
         alertmanager:
-          enabled: false
+          enabled: true
         
         vmalert:
-          enabled: false
+          enabled: true
         
         kubeStateMetrics:
           enabled: true
