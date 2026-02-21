@@ -1,17 +1,17 @@
 apiVersion: operator.victoriametrics.com/v1beta1
 kind: VMServiceScrape
 metadata:
-  name: argocd-server
+  name: argocd-server-metrics
   labels:
     {{- include "monitoring-dashboards.labels" . | nindent 4 }}
 spec:
   endpoints:
-    - port: metrics
+    - port: "8083"
       path: /metrics
       interval: 30s
   selector:
     matchLabels:
-      app.kubernetes.io/name: argocd-server
+      app.kubernetes.io/name: argocd-server-metrics
   namespaceSelector:
     matchNames:
       - argocd
@@ -20,17 +20,17 @@ spec:
 apiVersion: operator.victoriametrics.com/v1beta1
 kind: VMServiceScrape
 metadata:
-  name: argocd-repo-server
+  name: argocd-repo-server-metrics
   labels:
     {{- include "monitoring-dashboards.labels" . | nindent 4 }}
 spec:
   endpoints:
-    - port: metrics
+    - port: "8084"
       path: /metrics
       interval: 30s
   selector:
     matchLabels:
-      app.kubernetes.io/name: argocd-repo-server
+      app.kubernetes.io/name: argocd-repo-server-metrics
   namespaceSelector:
     matchNames:
       - argocd
@@ -39,17 +39,17 @@ spec:
 apiVersion: operator.victoriametrics.com/v1beta1
 kind: VMServiceScrape
 metadata:
-  name: argocd-application-controller
+  name: argocd-application-controller-metrics
   labels:
     {{- include "monitoring-dashboards.labels" . | nindent 4 }}
 spec:
   endpoints:
-    - port: metrics
+    - port: "8082"
       path: /metrics
       interval: 30s
   selector:
     matchLabels:
-      app.kubernetes.io/name: argocd-application-controller
+      app.kubernetes.io/name: argocd-metrics
   namespaceSelector:
     matchNames:
       - argocd
