@@ -1,0 +1,50 @@
+# Self-managed ArgoCD - allows viewing all ArgoCD resources in the UI
+# Note: Do NOT enable automated sync to avoid upgrade loops
+# ArgoCD is initially installed via Helm in install_k3s.sh, then managed by itself
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: argocd
+  namespace: argocd
+  annotations:
+    argocd.argoproj.io/sync-wave: "-1"
+spec:
+  project: default
+  source:
+    repoURL: https://argoproj.github.io/argo-helm
+    chart: argo-cd
+    targetRevision: "7.7.10"
+    helm:
+      valuesObject:
+        configs:
+          params:
+            server.insecure: true
+        server:
+          service:
+            type: ClusterIP
+          ingress:
+            enabled: true
+            ingressClassName: traefik
+            annotations:
+              traefik.ingress.kubernetes.io/router.entrypoints: web
+            hosts:
+              - argocd.localtest.me
+        global:
+          domain: argocd.localtest.me
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: argocd
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+      - ServerSideApply=true
+      - RespectIgnoreDifferences=true
+  # Ignore differences that cause constant drift
+  ignoreDifferences:
+    - group: apps
+      kind: Deployment
+      jsonPointers:
+        - /spec/replicas
