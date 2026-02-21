@@ -1,0 +1,21 @@
+# VMPodScrape for CloudNativePG metrics
+# Scrapes metrics from PostgreSQL pods on port 9187
+# https://docs.victoriametrics.com/operator/resources/vmpodscrape/
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMPodScrape
+metadata:
+  name: postgresql
+  namespace: postgresql
+spec:
+  podMetricsEndpoints:
+    # Default port for monitoring CloudNativePG 
+    # https://cloudnative-pg.io/documentation/1.20/monitoring/
+    - targetPort: 9187
+      path: /metrics
+      interval: 30s
+  selector:
+    matchLabels:
+      cnpg.io/cluster: postgresql
+  namespaceSelector:
+    matchNames:
+      - postgresql
