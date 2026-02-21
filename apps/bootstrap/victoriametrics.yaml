@@ -41,6 +41,10 @@ spec:
         
         vmagent:
           enabled: true
+          ingress:
+            enabled: true
+            hosts:
+              - vmagent.localtest.me
           spec:
             resources:
               requests:
