@@ -13,6 +13,9 @@ spec:
     targetRevision: "0.28.0"
     helm:
       valuesObject:
+        # Datasource configuration with fixed UID for dashboards
+        defaultDatasourceType: prometheus
+        
         grafana:
           enabled: true
           adminPassword: admin
@@ -21,6 +24,20 @@ spec:
             ingressClassName: traefik
             hosts:
               - grafana.localtest.me
+          # Override default datasource with fixed UID
+          sidecar:
+            datasources:
+              enabled: true
+              defaultDatasourceEnabled: false
+          additionalDataSources:
+            - name: VictoriaMetrics
+              type: prometheus
+              uid: VictoriaMetrics
+              url: http://vmsingle-v-metrics-victoria-metrics-k8s-stack:8429
+              access: proxy
+              isDefault: true
+              jsonData:
+                timeInterval: 30s
         
         vmagent:
           enabled: true

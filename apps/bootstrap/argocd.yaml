@@ -13,13 +13,23 @@ spec:
   source:
     repoURL: https://argoproj.github.io/argo-helm
     chart: argo-cd
-    targetRevision: "7.7.10"
+    targetRevision: 9.3.7
     helm:
       valuesObject:
         configs:
           params:
             server.insecure: true
+        # Enable metrics for all components
+        controller:
+          metrics:
+            enabled: true
+            service:
+              enabled: true
         server:
+          metrics:
+            enabled: true
+            service:
+              enabled: true
           service:
             type: ClusterIP
           ingress:
@@ -29,6 +39,11 @@ spec:
               traefik.ingress.kubernetes.io/router.entrypoints: web
             hosts:
               - argocd.localtest.me
+        repoServer:
+          metrics:
+            enabled: true
+            service:
+              enabled: true
         global:
           domain: argocd.localtest.me
   destination:
