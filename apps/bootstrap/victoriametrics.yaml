@@ -40,6 +40,10 @@ spec:
               - vmsingle.localtest.me
           enabled: true
           spec:
+            podMetadata:
+              labels:
+                app.kubernetes.io/instance: v-metrics
+                argocd.argoproj.io/instance: v-metrics
             retentionPeriod: "7d"
             storage:
               storageClassName: local-path
