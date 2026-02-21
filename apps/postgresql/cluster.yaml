@@ -2,6 +2,7 @@ apiVersion: postgresql.cnpg.io/v1
 kind: Cluster
 metadata:
   name: postgresql
+  namespace: postgresql
 spec:
   description: "postgresql of cluster challenge"
   imageName: ghcr.io/cloudnative-pg/postgresql:16.4
