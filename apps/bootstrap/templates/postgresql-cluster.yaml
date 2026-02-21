@@ -1,3 +1,4 @@
+{{- if .Values.postgresqlCluster.enabled }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -5,11 +6,13 @@ metadata:
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "1"
+  labels:
+    {{- include "bootstrap.labels" . | nindent 4 }}
 spec:
   project: default
   source:
-    repoURL: https://github.com/jaimejorge/challenge.git
-    targetRevision: main
+    repoURL: {{ include "bootstrap.gitRepoURL" . }}
+    targetRevision: {{ include "bootstrap.gitBranch" . }}
     path: apps/postgresql
   destination:
     server: https://kubernetes.default.svc
@@ -20,3 +23,4 @@ spec:
       selfHeal: true
     syncOptions:
       - SkipDryRunOnMissingResource=true
+{{- end }}
