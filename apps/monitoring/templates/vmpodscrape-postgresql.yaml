@@ -5,10 +5,11 @@ apiVersion: operator.victoriametrics.com/v1beta1
 kind: VMPodScrape
 metadata:
   name: postgresql
-  namespace: postgresql
+  labels:
+    {{- include "monitoring-dashboards.labels" . | nindent 4 }}
 spec:
   podMetricsEndpoints:
-    # Default port for monitoring CloudNativePG 
+    # Default port for monitoring CloudNativePG
     # https://cloudnative-pg.io/documentation/1.20/monitoring/
     - targetPort: 9187
       path: /metrics
