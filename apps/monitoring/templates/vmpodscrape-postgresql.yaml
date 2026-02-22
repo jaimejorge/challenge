@@ -20,3 +20,22 @@ spec:
   namespaceSelector:
     matchNames:
       - postgresql
+---
+# VMPodScrape for CloudNativePG Operator
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMPodScrape
+metadata:
+  name: cnpg-operator
+  labels:
+    {{- include "monitoring-dashboards.labels" . | nindent 4 }}
+spec:
+  podMetricsEndpoints:
+    - port: metrics
+      path: /metrics
+      interval: 30s
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cloudnative-pg
+  namespaceSelector:
+    matchNames:
+      - cnpg-system
