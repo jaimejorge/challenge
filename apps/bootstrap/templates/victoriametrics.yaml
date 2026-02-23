@@ -95,16 +95,34 @@ spec:
 
         # Scheduler and controller-manager have TLS issues in kind - disable until fixed
         kubeScheduler:
-          enabled: false
+          enabled: true
+          vmScrape:
+            spec:
+              jobLabel: jobLabel
+              endpoints:
+                - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+                  port: http-metrics
+                  scheme: https
+                  tlsConfig:
+                    insecureSkipVerify: true
         kubeControllerManager:
-          enabled: false
+          enabled: true
+          vmScrape:
+            spec:
+              jobLabel: jobLabel
+              endpoints:
+                - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+                  port: http-metrics
+                  scheme: https
+                  tlsConfig:
+                    insecureSkipVerify: true
         kubeProxy:
           enabled: false
         
         defaultRules:
           rules:
-            kubeSchedulerAlerting: false
-            kubeControllerManager: false
+            kubeSchedulerAlerting: true
+            kubeControllerManager: true
             kubeProxy: false
         
   destination:
