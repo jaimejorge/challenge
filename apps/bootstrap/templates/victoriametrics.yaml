@@ -79,6 +79,33 @@ spec:
         
         prometheus-node-exporter:
           enabled: true
+
+        # etcd exposes HTTP metrics on port 2381 (configured in kind-config.yaml)
+        kubeEtcd:
+          enabled: true
+          service:
+            port: 2381
+            targetPort: 2381
+          vmScrape:
+            spec:
+              jobLabel: jobLabel
+              endpoints:
+                - port: http-metrics
+                  scheme: http
+
+        # Scheduler and controller-manager have TLS issues in kind - disable until fixed
+        kubeScheduler:
+          enabled: false
+        kubeControllerManager:
+          enabled: false
+        kubeProxy:
+          enabled: false
+        
+        defaultRules:
+          rules:
+            kubeSchedulerAlerting: false
+            kubeControllerManager: false
+            kubeProxy: false
         
   destination:
     server: https://kubernetes.default.svc
