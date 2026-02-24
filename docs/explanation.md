@@ -27,7 +27,7 @@ The operator handles failover, backups, and upgrades. With raw StatefulSets you'
 
 ## Docker-based tooling
 
-Everything runs inside a container (`scripts/run.sh`). The only thing you need installed is Docker. kubectl, helm, kind, argocd CLI, and mkcert all live in the image with pinned versions. No "works on my machine" problems, no version drift between contributors.
+Everything runs inside a container (`scripts/run.sh`). You need Docker and make on the host. kubectl, helm, kind, argocd CLI, and mkcert all live in the image with pinned versions. No "works on my machine" problems, no version drift between contributors.
 
 ## Argocd Sync waves
 

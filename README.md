@@ -1,6 +1,6 @@
 # Challenge K3s
 
-Local Kubernetes environment. GitOps with ArgoCD. Only needs Docker.
+Local Kubernetes environment. GitOps with ArgoCD. Needs Docker and make.
 
 ## Architecture
 
@@ -8,7 +8,7 @@ Local Kubernetes environment. GitOps with ArgoCD. Only needs Docker.
 ## Quick start
 
 ```bash
-# Only prerequisite: Docker
+# Prerequisites: Docker + make
 ./start.sh
 ```
 
@@ -86,7 +86,7 @@ make clean
 
 ## Design choices
 
-- Only Docker on the host. All tools run in a container.
+- Docker + make on the host. All tools run in a container.
 - ArgoCD App-of-Apps. One bootstrap Application deploys everything else.
 - CloudNativePG instead of raw StatefulSets for PostgreSQL.
 - Tool versions pinned in the Dockerfile.
