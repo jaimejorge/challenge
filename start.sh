@@ -5,6 +5,7 @@ set -euo pipefail
 # Check dependencies
 if [[ ! $(command -v docker) ]]; then
     echo "ERROR: Docker is required. Install from https://docs.docker.com/get-docker/"
+    echo "Also make sure to install docker-buildx: sudo apt install docker-buildx."
     exit 1
 fi
 
