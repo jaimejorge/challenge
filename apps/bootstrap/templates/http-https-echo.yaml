@@ -1,3 +1,4 @@
+{{- if .Values.httpHttpsEcho.enabled }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -7,12 +8,13 @@ metadata:
     argocd.argoproj.io/sync-wave: "0"
   finalizers:
     - resources-finalizer.argocd.argoproj.io
+  labels:
+    {{- include "bootstrap.labels" . | nindent 4 }}
 spec:
   project: default
-
   source:
-    repoURL: https://github.com/jaimejorge/challenge.git
-    targetRevision: main
+    repoURL: {{ include "bootstrap.gitRepoURL" . }}
+    targetRevision: {{ include "bootstrap.gitBranch" . }}
     path: apps/http-https-echo
     helm:
       releaseName: echo
@@ -22,19 +24,15 @@ spec:
       values: |
         ingress:
           enabled: true
-          className: traefik
-          annotations:
-            traefik.ingress.kubernetes.io/router.entrypoints: web
+          className: {{ .Values.ingressClassName }}
           hosts:
-            - host: echo.localtest.me
+            - host: echo.{{ .Values.domain }}
               paths:
                 - path: /
                   pathType: Prefix
-
   destination:
     server: https://kubernetes.default.svc
     namespace: default
-
   syncPolicy:
     automated:
       prune: true
@@ -42,4 +40,4 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - PruneLast=true
-
+{{- end }}

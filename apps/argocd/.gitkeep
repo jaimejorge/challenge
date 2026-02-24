@@ -1,0 +1,3 @@
+# ArgoCD extra configurations
+# This directory is used to visualize ArgoCD resources in the ArgoCD UI
+# Add any extra ConfigMaps, Secrets, or customizations here

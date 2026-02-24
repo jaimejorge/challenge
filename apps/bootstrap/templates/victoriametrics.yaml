@@ -1,3 +1,4 @@
+{{- if .Values.victoriametrics.enabled }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -5,26 +6,25 @@ metadata:
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "1"
+  labels:
+    {{- include "bootstrap.labels" . | nindent 4 }}
 spec:
   project: default
   source:
     repoURL: https://victoriametrics.github.io/helm-charts/
     chart: victoria-metrics-k8s-stack
-    targetRevision: "0.28.0"
+    targetRevision: {{ .Values.victoriametrics.chartVersion | quote }}
     helm:
       valuesObject:
-        # Datasource configuration with fixed UID for dashboards
         defaultDatasourceType: prometheus
         
         grafana:
           enabled: true
-          adminPassword: admin
           ingress:
             enabled: true
-            ingressClassName: traefik
+            ingressClassName: {{ .Values.ingressClassName }}
             hosts:
-              - grafana.localtest.me
-          # Override default datasource with fixed UID
+              - grafana.{{ .Values.domain }}
           sidecar:
             datasources:
               enabled: true
@@ -44,40 +44,29 @@ spec:
           ingress:
             enabled: true
             hosts:
-              - vmagent.localtest.me
+              - vmagent.{{ .Values.domain }}
           spec:
             resources:
-              requests:
-                cpu: "50m"
-                memory: "128Mi"
-              limits:
-                cpu: "300m"
-                memory: "256Mi"
+              {{- toYaml .Values.victoriametrics.vmagent.resources | nindent 14 }}
         
         vmsingle:
           ingress:
             enabled: true
             hosts:
-              - vmsingle.localtest.me
+              - vmsingle.{{ .Values.domain }}
           enabled: true
           spec:
             podMetadata:
               labels:
                 app.kubernetes.io/instance: v-metrics
                 argocd.argoproj.io/instance: v-metrics
-            retentionPeriod: "7d"
+            retentionPeriod: {{ .Values.victoriametrics.retentionPeriod | quote }}
             storage:
-              storageClassName: local-path
               resources:
                 requests:
-                  storage: 256Mi
+                  storage: {{ .Values.victoriametrics.storageSize }}
             resources:
-              requests:
-                cpu: "50m"
-                memory: "256Mi"
-              limits:
-                cpu: "500m"
-                memory: "512Mi"
+              {{- toYaml .Values.victoriametrics.vmsingle.resources | nindent 14 }}
         
         alertmanager:
           enabled: true
@@ -90,23 +79,52 @@ spec:
         
         prometheus-node-exporter:
           enabled: true
-        
-        # Disable components that don't apply to k3s
-        # k3s uses embedded etcd/sqlite and doesn't expose scheduler/controller-manager metrics
-        # This also disables the associated dashboards
+
+        # etcd exposes HTTP metrics on port 2381 (configured in kind-config.yaml)
         kubeEtcd:
-          enabled: false
+          enabled: true
+          service:
+            port: 2381
+            targetPort: 2381
+          vmScrape:
+            spec:
+              jobLabel: jobLabel
+              endpoints:
+                - port: http-metrics
+                  scheme: http
+
+        # Scheduler and controller-manager have TLS issues in kind - disable until fixed
         kubeScheduler:
-          enabled: false
+          enabled: true
+          vmScrape:
+            spec:
+              jobLabel: jobLabel
+              endpoints:
+                - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+                  port: http-metrics
+                  scheme: https
+                  tlsConfig:
+                    insecureSkipVerify: true
         kubeControllerManager:
+          enabled: true
+          vmScrape:
+            spec:
+              jobLabel: jobLabel
+              endpoints:
+                - bearerTokenFile: /var/run/secrets/kubernetes.io/serviceaccount/token
+                  port: http-metrics
+                  scheme: https
+                  tlsConfig:
+                    insecureSkipVerify: true
+        kubeProxy:
           enabled: false
         
-        # Disable VMRules that don't apply to k3s
         defaultRules:
           rules:
-            etcd: false
-            kubeScheduler: false
-            kubeControllerManager: false
+            kubeSchedulerAlerting: true
+            kubeControllerManager: true
+            kubeProxy: false
+        
   destination:
     server: https://kubernetes.default.svc
     namespace: monitoring
@@ -117,3 +135,4 @@ spec:
     syncOptions:
       - CreateNamespace=true
       - ServerSideApply=true
+{{- end }}

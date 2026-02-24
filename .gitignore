@@ -1,0 +1,28 @@
+# TLS certificates (mkcert)
+certs/
+
+# Helm
+*.tgz
+charts/
+
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Kubernetes
+kubeconfig
+*.kubeconfig
+.kube/
+
+# mkcert CA 
+.mkcert/
+
+# Temporary
+*.tmp
+*.log
+

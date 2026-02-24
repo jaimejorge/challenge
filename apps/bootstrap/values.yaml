@@ -1,0 +1,63 @@
+# Git repository configuration
+git:
+  repoURL: https://github.com/jaimejorge/gitops-k8s-lab.git
+  branch: main
+
+# Domain configuration
+domain: localtest.me
+
+# Ingress configuration
+ingressClassName: nginx
+
+# ArgoCD configuration
+argocd:
+  enabled: true
+  chartVersion: "9.4.3"
+
+# Ingress NGINX controller
+ingressNginx:
+  enabled: true
+  chartVersion: "4.10.0"
+  nodePorts:
+    http: 30080
+    https: 30443
+
+# CloudNativePG operator
+cnpgOperator:
+  enabled: true
+  chartVersion: "0.23.0"
+
+# PostgreSQL cluster
+postgresqlCluster:
+  enabled: true
+
+# VictoriaMetrics monitoring stack
+victoriametrics:
+  enabled: true
+  chartVersion: "0.28.0"
+  retentionPeriod: "7d"
+  storageSize: "256Mi"
+  vmsingle:
+    resources:
+      requests:
+        cpu: "50m"
+        memory: "256Mi"
+      limits:
+        cpu: "500m"
+        memory: "512Mi"
+  vmagent:
+    resources:
+      requests:
+        cpu: "50m"
+        memory: "128Mi"
+      limits:
+        cpu: "300m"
+        memory: "256Mi"
+
+# Monitoring dashboards
+monitoringDashboards:
+  enabled: true
+
+# HTTP/HTTPS Echo service
+httpHttpsEcho:
+  enabled: true

@@ -1,0 +1,39 @@
+{{- if .Values.alerts.httpEcho.enabled }}
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMRule
+metadata:
+  name: http-echo-alerts
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "monitoring.labels" . | nindent 4 }}
+spec:
+  groups:
+    - name: http-echo
+      rules:
+        - alert: HttpEchoDown
+          expr: up{job="http-https-echo"} == 0
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "HTTP Echo service is down"
+            description: "HTTP Echo pod {{ "{{ $labels.pod }}" }} has been down for more than 1 minute."
+
+        - alert: HttpEchoHighLatency
+          expr: histogram_quantile(0.95, sum(rate(http_request_duration_seconds_bucket{job="http-https-echo"}[5m])) by (le)) > 1
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "HTTP Echo high latency"
+            description: "95th percentile latency is above 1 second."
+
+        - alert: HttpEchoHighErrorRate
+          expr: sum(rate(http_requests_total{job="http-https-echo", status=~"5.."}[5m])) / sum(rate(http_requests_total{job="http-https-echo"}[5m])) > 0.05
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "HTTP Echo high error rate"
+            description: "Error rate is above 5%."
+{{- end }}

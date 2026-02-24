@@ -1,7 +1,10 @@
-# Grafana dashboard configuration
 dashboards:
-  # Label for Grafana sidecar discovery
   label: grafana_dashboard
   labelValue: "1"
-  # Folder annotation for organizing dashboards
   folder: "CloudNativePG"
+
+alerts:
+  httpEcho:
+    enabled: true
+  postgresql:
+    enabled: true

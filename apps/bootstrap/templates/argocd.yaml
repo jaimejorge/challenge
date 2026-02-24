@@ -1,6 +1,4 @@
-# Self-managed ArgoCD - allows viewing all ArgoCD resources in the UI
-# Note: Do NOT enable automated sync to avoid upgrade loops
-# ArgoCD is initially installed via Helm in install_k3s.sh, then managed by itself
+{{- if .Values.argocd.enabled }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
@@ -8,18 +6,19 @@ metadata:
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "-1"
+  labels:
+    {{- include "bootstrap.labels" . | nindent 4 }}
 spec:
   project: default
   source:
     repoURL: https://argoproj.github.io/argo-helm
     chart: argo-cd
-    targetRevision: 9.4.3
+    targetRevision: {{ .Values.argocd.chartVersion | quote }}
     helm:
       valuesObject:
         configs:
           params:
             server.insecure: true
-        # Enable metrics for all components
         controller:
           metrics:
             enabled: true
@@ -34,18 +33,16 @@ spec:
             type: ClusterIP
           ingress:
             enabled: true
-            ingressClassName: traefik
-            annotations:
-              traefik.ingress.kubernetes.io/router.entrypoints: web
+            ingressClassName: {{ .Values.ingressClassName }}
             hosts:
-              - argocd.localtest.me
+              - argocd.{{ .Values.domain }}
         repoServer:
           metrics:
             enabled: true
             service:
               enabled: true
         global:
-          domain: argocd.localtest.me
+          domain: argocd.{{ .Values.domain }}
   destination:
     server: https://kubernetes.default.svc
     namespace: argocd
@@ -57,9 +54,9 @@ spec:
       - CreateNamespace=true
       - ServerSideApply=true
       - RespectIgnoreDifferences=true
-  # Ignore differences that cause constant drift
   ignoreDifferences:
     - group: apps
       kind: Deployment
       jsonPointers:
         - /spec/replicas
+{{- end }}

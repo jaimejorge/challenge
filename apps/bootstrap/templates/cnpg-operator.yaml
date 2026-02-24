@@ -1,16 +1,19 @@
+{{- if .Values.cnpgOperator.enabled }}
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: cnpg-operator
+  name: cloudnative-pg-operator
   namespace: argocd
   annotations:
     argocd.argoproj.io/sync-wave: "0"
+  labels:
+    {{- include "bootstrap.labels" . | nindent 4 }}
 spec:
   project: default
   source:
     repoURL: https://cloudnative-pg.github.io/charts
     chart: cloudnative-pg
-    targetRevision: "0.23.0"
+    targetRevision: {{ .Values.cnpgOperator.chartVersion | quote }}
   destination:
     server: https://kubernetes.default.svc
     namespace: cnpg-system
@@ -22,3 +25,4 @@ spec:
       - CreateNamespace=true
       - ServerSideApply=true
       - SkipDryRunOnMissingResource=true
+{{- end }}
