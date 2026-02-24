@@ -79,7 +79,7 @@ make clean
 
 ## Docs
 
-- [Tutorial](docs/tutorial.md:  Step-by-step deployment
+- [Tutorial](docs/tutorial.md):  Step-by-step deployment
 - [How-to guides](docs/howto.md):  Common tasks 
 - [Reference](docs/reference.md):  Ports, URLs, config 
 - [Explanation](docs/explanation.md):  Why things are the way they are 
