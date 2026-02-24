@@ -5,7 +5,7 @@ metadata:
   name: http-echo-alerts
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "monitoring.labels" . | nindent 4 }}
+    {{- include "monitoring-dashboards.labels" . | nindent 4 }}
 spec:
   groups:
     - name: http-echo

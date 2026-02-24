@@ -4,7 +4,7 @@ metadata:
   name: http-https-echo
   namespace: {{ .Release.Namespace }}
   labels:
-    {{- include "monitoring.labels" . | nindent 4 }}
+    {{- include "monitoring-dashboards.labels" . | nindent 4 }}
 spec:
   selector:
     matchLabels:
