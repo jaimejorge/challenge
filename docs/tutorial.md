@@ -2,7 +2,10 @@
 
 Get a local Kubernetes cluster running with GitOps, monitoring, and PostgreSQL. Takes about 10 minutes.
 
-You need Docker installed and ~6GB of free RAM.
+Prerequisites:
+- Docker
+- make (`apt install make` / `dnf install make` / `xcode-select --install`)
+- ~6GB of free RAM
 
 ---
 
