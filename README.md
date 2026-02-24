@@ -22,6 +22,15 @@ Local Kubernetes environment. GitOps with ArgoCD. Needs Docker and make.
 - [VMAgent](https://vmagent.localtest.me)
 - PostgreSQL: `localhost:5432` 
 
+# Access with kubectl
+
+```
+export KUBECONFIG=.kube/config
+kubectl get pods -A
+kubectl get apps -A
+```
+
+
 
 ## Credentials
 
