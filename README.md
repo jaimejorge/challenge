@@ -1,4 +1,4 @@
-# Challenge K3s
+# gitops-k8s-lab
 
 Local Kubernetes environment. GitOps with ArgoCD. Needs Docker and make.
 
