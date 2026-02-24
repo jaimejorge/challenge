@@ -19,4 +19,5 @@ if [[ ! $(command -v make) ]]; then
     exit 1
 fi
 
+make docker-build
 make install
