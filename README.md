@@ -68,7 +68,7 @@ make clean         # Delete the cluster
 make argocd-info   # Show ArgoCD credentials
 make grafana-info  # Show Grafana credentials
 make postgresql-info  # Show PostgreSQL credentials
-make download-dashboard ID=1860  # Download a Grafana dashboard
+make download-dashboard ID=1860 NAME=grafana # Download a Grafana dashboard
 ```
 
 ## Cleanup

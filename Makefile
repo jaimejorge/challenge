@@ -17,7 +17,7 @@ help:
 	@echo "  argocd-info   - Show ArgoCD URL, username and password"
 	@echo "  grafana-info  - Show Grafana URL, username and password"
 	@echo "  postgresql-info - Show PostgreSQL connection info"
-	@echo "  download-dashboard ID=<id> - Download a Grafana dashboard from grafana.com"
+	@echo "  download-dashboard ID=<id> NAME=<name> - Download a Grafana dashboard from grafana.com"
 	@echo "  check         - Check cluster and apps status, diagnose issues"
 	@echo "  clean         - Delete the kind cluster"
 	@echo ""

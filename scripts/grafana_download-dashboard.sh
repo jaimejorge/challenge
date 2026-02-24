@@ -13,7 +13,7 @@ DASHBOARD_ID="${1:-}"
 OUTPUT_NAME="${2:-}"
 
 if [[ -z "${DASHBOARD_ID}" || -z "${OUTPUT_NAME}" ]]; then
-    echo "Usage: $0 <dashboard_id> <output_name>"
+    echo "Usage: make download-dashboard ID=<dashboard_id> NAME=<output_name>"
     exit 1
 fi
 
