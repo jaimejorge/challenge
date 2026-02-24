@@ -9,20 +9,14 @@ spec:
   instances: 1
   startDelay: 30
   stopDelay: 30
-  primaryUpdateStrategy: unsupervised
-  
+  primaryUpdateStrategy: unsupervised 
   enableSuperuserAccess: true
-  superuserSecret:
-    name: postgresql-superuser
-  
   bootstrap:
     initdb:
       database: app
       owner: postgres
-
   storage:
     size: 256Mi
-  
   resources:
     requests:
       memory: "128Mi"
@@ -30,7 +24,6 @@ spec:
     limits:
       memory: "256Mi"
       cpu: "200m"
-
   monitoring:
     enablePodMonitor: true
 

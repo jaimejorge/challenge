@@ -1,7 +1,4 @@
 {{- if .Values.argocd.enabled }}
-# Self-managed ArgoCD - allows viewing all ArgoCD resources in the UI
-# Note: Do NOT enable automated sync to avoid upgrade loops
-# ArgoCD is initially installed via Helm in install.sh, then managed by itself
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:

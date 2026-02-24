@@ -1,6 +1,6 @@
 # Git repository configuration
 git:
-  repoURL: https://github.com/jaimejorge/challenge.git
+  repoURL: https://github.com/jaimejorge/gitops-k8s-lab.git
   branch: main
 
 # Domain configuration

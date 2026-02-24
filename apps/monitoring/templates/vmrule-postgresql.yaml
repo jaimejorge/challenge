@@ -1,0 +1,106 @@
+{{- if .Values.alerts.postgresql.enabled }}
+# Rules for CloudNativePG cluster
+# Based on https://stackgres.io/doc/1.0/runbooks/postgres-alerts/
+apiVersion: operator.victoriametrics.com/v1beta1
+kind: VMRule
+metadata:
+  name: postgresql-alerts
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "monitoring.labels" . | nindent 4 }}
+spec:
+  groups:
+    - name: postgresql
+      rules:
+        # Critical alerts
+        - alert: PostgreSQLDown
+          expr: cnpg_collector_up == 0
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "PostgreSQL cluster is down"
+            description: "CloudNativePG cluster {{ "{{ $labels.cluster }}" }} is not responding."
+
+        - alert: PostgreSQLSplitBrain
+          expr: count by(cluster) (cnpg_pg_replication_is_replica == 0) > 1
+          for: 1m
+          labels:
+            severity: critical
+          annotations:
+            summary: "PostgreSQL split brain detected"
+            description: "More than one primary instance in cluster {{ "{{ $labels.cluster }}" }}. CRITICAL!"
+
+        - alert: PostgreSQLBackupFailed
+          expr: cnpg_pg_wal_archive_status != 1
+          for: 15m
+          labels:
+            severity: critical
+          annotations:
+            summary: "PostgreSQL WAL archiving failed"
+            description: "WAL archiving has been failing for 15 minutes in cluster {{ "{{ $labels.cluster }}" }}."
+
+        # Warning alerts
+        - alert: PostgreSQLReplicaLag
+          expr: cnpg_pg_replication_lag > 30
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "PostgreSQL replication lag"
+            description: "Replica {{ "{{ $labels.pod }}" }} is {{ "{{ $value }}" }}s behind primary."
+
+        - alert: PostgreSQLReplicaLagSize
+          expr: cnpg_pg_replication_status_lag_size > 100000000
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "PostgreSQL replication lag size too large"
+            description: "Replication lag on {{ "{{ $labels.pod }}" }} is {{ "{{ $value | humanize1024 }}" }}B behind primary."
+
+        - alert: PostgreSQLHighConnections
+          expr: sum by (cluster) (cnpg_backends_total) / cnpg_pg_settings_setting{name="max_connections"} > 0.9
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "PostgreSQL connection usage above 90%"
+            description: "Connection usage in cluster {{ "{{ $labels.cluster }}" }} is at {{ "{{ $value | humanizePercentage }}" }}."
+
+        - alert: PostgreSQLTooManyDeadTuples
+          expr: ((cnpg_pg_stat_user_tables_n_dead_tup > 100000) / (cnpg_pg_stat_user_tables_n_live_tup + cnpg_pg_stat_user_tables_n_dead_tup)) >= 0.1
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "PostgreSQL too many dead tuples"
+            description: "Table {{ "{{ $labels.relname }}" }} has {{ "{{ $value | humanizePercentage }}" }} dead tuples. Consider running VACUUM."
+
+        - alert: PostgreSQLInactiveReplicationSlots
+          expr: cnpg_pg_replication_slots_active == 0
+          for: 30m
+          labels:
+            severity: warning
+          annotations:
+            summary: "PostgreSQL inactive replication slots"
+            description: "Inactive replication slot {{ "{{ $labels.slot_name }}" }} in cluster {{ "{{ $labels.cluster }}" }}."
+
+        - alert: PostgreSQLPromotedNode
+          expr: cnpg_pg_replication_is_replica and changes(cnpg_pg_replication_is_replica[1m]) > 0
+          for: 1m
+          labels:
+            severity: warning
+          annotations:
+            summary: "PostgreSQL standby promoted to primary"
+            description: "Instance {{ "{{ $labels.pod }}" }} was promoted to primary in cluster {{ "{{ $labels.cluster }}" }}."
+
+        - alert: PostgreSQLHighSequentialScans
+          expr: rate(cnpg_pg_stat_user_tables_seq_scan[5m]) > 100
+          for: 10m
+          labels:
+            severity: warning
+          annotations:
+            summary: "PostgreSQL high sequential scans"
+            description: "Table {{ "{{ $labels.relname }}" }} has high sequential scan rate. Consider adding indexes."
+{{- end }}
