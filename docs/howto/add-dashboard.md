@@ -17,14 +17,8 @@ Some useful ones:
 
 ```bash
 # From the host
-make download-dashboard ID=1860
+make download-dashboard ID=1860 NNAME=node-exporterE
 
-# With a specific revision and output name
-make download-dashboard ID=1860 REV=latest NAME=node-exporter
-
-# Or inside the Docker container
-make run
-./scripts/download-dashboard.sh 1860
 ```
 
 The script downloads the JSON from the grafana.com API, replaces `${DS_PROMETHEUS}` with `VictoriaMetrics`, and saves it to `apps/monitoring/dashboards/`.

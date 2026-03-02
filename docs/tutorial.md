@@ -77,21 +77,6 @@ psql -h localhost -p 5432 -U app -d app
 
 ---
 
-## Interactive shell
-
-If you want to poke around inside the tools container:
-
-```bash
-make run
-
-# Then:
-kubectl get pods -A
-helm list -A
-argocd app list
-```
-
----
-
 ## Cleanup
 
 ```bash
